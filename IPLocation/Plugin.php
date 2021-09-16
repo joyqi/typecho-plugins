@@ -19,7 +19,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
  * @author joyqi
  * @version 1.1.0
  * @since 1.2.0
- * @link https://joyqi.com/typecho/iplocation-plugin.html
+ * @link https://github.com/joyqi/typecho-plugins
  */
 class Plugin implements PluginInterface
 {

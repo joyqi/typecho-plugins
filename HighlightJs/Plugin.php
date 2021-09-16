@@ -17,10 +17,10 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
  * Highlight.JS插件，智能实现代码高亮
  *
  * @package Highlight Js
- * @author qining
+ * @author joyqi
  * @version 1.1.0
  * @since 1.2.0
- * @link http://70.io
+ * @link https://github.com/joyqi/typecho-plugins
  */
 class Plugin implements PluginInterface
 {

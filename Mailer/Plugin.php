@@ -1,75 +1,76 @@
 <?php
-if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 
-require_once __DIR__ . '/PHPMailer.php';
+namespace TypechoPlugin\Mailer;
+
+use Typecho\Plugin\PluginInterface;
+use Typecho\Widget\Helper\Form;
+use Utils\Helper;
+use Widget\Feedback;
+use Widget\Service;
+
+if (!defined('__TYPECHO_ROOT_DIR__')) {
+    exit;
+}
 
 /**
  * 将评论发送至相关邮箱
- * 
+ *
  * @package Mailer
  * @author joyqi
- * @version 1.1.0
- * @link https://joyqi.com/typecho/mailer-plugin.html
+ * @version 1.2.0
+ * @since 1.2.0
+ * @link https://github.com/joyqi/typecho-plugins
  */
-class Mailer_Plugin implements Typecho_Plugin_Interface
+class Plugin implements PluginInterface
 {
     /**
      * 激活插件方法,如果激活失败,直接抛出异常
-     * 
-     * @access public
-     * @return void
-     * @throws Typecho_Plugin_Exception
      */
     public static function activate()
     {
-        Typecho_Plugin::factory('Widget_Feedback')->finishComment = array('Mailer_Plugin', 'send');
-        Typecho_Plugin::factory('Widget_Service')->sendMail = array('Mailer_Plugin', 'sendMail');
+        Feedback::pluginHandle()->finishComment = __CLASS__ . '::send';
+        Service::pluginHandle()->sendMail = __CLASS__ . '::sendMail';
     }
-    
+
     /**
      * 禁用插件方法,如果禁用失败,直接抛出异常
-     * 
-     * @static
-     * @access public
-     * @return void
-     * @throws Typecho_Plugin_Exception
      */
-    public static function deactivate(){}
-    
+    public static function deactivate()
+    {
+    }
+
     /**
      * 获取插件配置面板
-     * 
-     * @access public
-     * @param Typecho_Widget_Helper_Form $form 配置面板
-     * @return void
+     *
+     * @param Form $form 配置面板
      */
-    public static function config(Typecho_Widget_Helper_Form $form)
+    public static function config(Form $form)
     {
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Text('host', NULL, '', _t('邮件服务器')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Select('port', array(25 => 25, 465 => 465, 587 => 587, 2525 => 2525), 587, _t('端口号')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Select('secure', array('tls' => 'tls', 'ssl' => 'ssl'), 'ssl', _t('连接加密方式')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Radio('auth', array(1 => '是', 0 => '否'), 0, _t('启用身份验证')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Text('user', NULL, '', _t('用户名'), _t('启用身份验证后有效')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Text('password', NULL, '', _t('密码'), _t('启用身份验证后有效')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Text('from', NULL, '', _t('发送人邮箱')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Radio('reply', array(1 => '是', 0 => '否'), 0, _t('发送回复'), _t('如果评论人收到回复, 那么给他也发送一封邮件')));
-        $form->addInput(new Typecho_Widget_Helper_Form_Element_Textarea('template', NULL, "你收到了关于文章《{title}》来自 {user} 的评论\n{url}\n\n以下是评论详情:\n\n{text}", _t('邮件正文模版')));
+        $form->addInput(new Form\Element\Text('host', null, '', _t('邮件服务器')));
+        $form->addInput(new Form\Element\Select('port', [25 => 25, 465 => 465, 587 => 587, 2525 => 2525], 587, _t('端口号')));
+        $form->addInput(new Form\Element\Select('secure', ['tls' => 'tls', 'ssl' => 'ssl'], 'ssl', _t('连接加密方式')));
+        $form->addInput(new Form\Element\Radio('auth', [1 => '是', 0 => '否'], 0, _t('启用身份验证')));
+        $form->addInput(new Form\Element\Text('user', null, '', _t('用户名'), _t('启用身份验证后有效')));
+        $form->addInput(new Form\Element\Text('password', null, '', _t('密码'), _t('启用身份验证后有效')));
+        $form->addInput(new Form\Element\Text('from', null, '', _t('发送人邮箱')));
+        $form->addInput(new Form\Element\Radio('reply', [1 => '是', 0 => '否'], 0, _t('发送回复'), _t('如果评论人收到回复, 那么给他也发送一封邮件')));
+        $form->addInput(new Form\Element\Textarea('template', null, "你收到了关于文章《{title}》来自 {user} 的评论\n{url}\n\n以下是评论详情:\n\n{text}", _t('邮件正文模版')));
     }
-    
+
     /**
      * 个人用户的配置面板
-     * 
-     * @access public
-     * @param Typecho_Widget_Helper_Form $form
-     * @return void
+     *
+     * @param Form $form
      */
-    public static function personalConfig(Typecho_Widget_Helper_Form $form){}
+    public static function personalConfig(Form $form)
+    {
+    }
 
     /**
      * 检查参数
      *
      * @param array $settings
-     * @return string
+     * @return string|void
      */
     public static function configCheck(array $settings)
     {
@@ -116,10 +117,10 @@ class Mailer_Plugin implements Typecho_Plugin_Interface
             }
         }
     }
-    
+
     /**
      * 异步回调
-     * 
+     *
      * @access public
      * @param int $commentId 评论id
      * @return void
@@ -137,7 +138,7 @@ class Mailer_Plugin implements Typecho_Plugin_Interface
         if (!$comment->have() || empty($comment->mail)) {
             return;
         }
-        
+
         $mail = new PHPMailer(false);
 
         $mail->isSMTP();
@@ -152,8 +153,8 @@ class Mailer_Plugin implements Typecho_Plugin_Interface
         $mail->CharSet = 'utf-8';
         $mail->setFrom($pluginOptions->from, $options->title);
         $mail->Subject = _t('来自文章 %s 的评论', $comment->title);
-        $mail->Body = str_replace(array('{user}', '{title}', '{url}', '{text}'),
-            array($comment->author, $comment->title, $comment->permalink, $comment->text), $pluginOptions->template);
+        $mail->Body = str_replace(['{user}', '{title}', '{url}', '{text}'],
+            [$comment->author, $comment->title, $comment->permalink, $comment->text], $pluginOptions->template);
 
         $post = Helper::widgetById('contents', $comment->cid);
         $mail->addAddress($post->author->mail, $post->author->name);
