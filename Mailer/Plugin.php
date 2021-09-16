@@ -121,11 +121,9 @@ class Plugin implements PluginInterface
     /**
      * 异步回调
      *
-     * @access public
      * @param int $commentId 评论id
-     * @return void
      */
-    public static function sendMail($commentId)
+    public static function sendMail(int $commentId)
     {
         $options = Helper::options();
         $pluginOptions = $options->plugin('Mailer');
