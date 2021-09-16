@@ -1,6 +1,8 @@
 <?php
 
-class IPLocation_IP
+namespace TypechoPlugin\IPLocation;
+
+class IP
 {
     private static $ip     = NULL;
     private static $fp     = NULL;
@@ -57,12 +59,12 @@ class IPLocation_IP
             self::$fp = fopen(__DIR__ . '/17monipdb.dat', 'rb');
             if (self::$fp === FALSE)
             {
-                throw new Exception('Invalid 17monipdb.dat file!');
+                throw new \Exception('Invalid 17monipdb.dat file!');
             }
             self::$offset = unpack('Nlen', fread(self::$fp, 4));
             if (self::$offset['len'] < 4)
             {
-                throw new Exception('Invalid 17monipdb.dat file!');
+                throw new \Exception('Invalid 17monipdb.dat file!');
             }
             self::$index = fread(self::$fp, self::$offset['len'] - 4);
         }

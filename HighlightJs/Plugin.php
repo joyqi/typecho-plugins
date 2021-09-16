@@ -9,6 +9,10 @@ use Widget\Archive;
 use Widget\Base\Comments;
 use Widget\Base\Contents;
 
+if (!defined('__TYPECHO_ROOT_DIR__')) {
+    exit;
+}
+
 /**
  * Highlight.JS插件，智能实现代码高亮
  *

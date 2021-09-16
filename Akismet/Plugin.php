@@ -14,6 +14,10 @@ use Widget\Feedback;
 use Widget\Options;
 use Widget\XmlRpc;
 
+if (!defined('__TYPECHO_ROOT_DIR__')) {
+    exit;
+}
+
 /**
  * Akismet 反垃圾评论插件 for Typecho
  *
