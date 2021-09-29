@@ -75,21 +75,24 @@ class Plugin implements PluginInterface
     /**
      * 输出头部css
      */
-    public static function header()
+    public static function header($header, Archive $archive)
     {
-        $cssUrl = Helper::options()->pluginUrl . '/HighlightJs/res/styles/'
-            . Helper::options()->plugin('HighlightJs')->style;
-        echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />';
+        if ($archive->is('single')) {
+            $cssUrl = Helper::options()->pluginUrl . '/HighlightJs/res/styles/'
+                . Helper::options()->plugin('HighlightJs')->style;
+            echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />';
+        }
     }
 
     /**
      * 输出尾部js
      */
-    public static function footer()
+    public static function footer(Archive $archive)
     {
-        $jsUrl = Helper::options()->pluginUrl . '/HighlightJs/res/highlight.pack.js';
-        echo '<script type="text/javascript" src="' . $jsUrl . '"></script>';
-        echo '<script type="text/javascript">window.onload = function () {
+        if ($archive->is('single')) {
+            $jsUrl = Helper::options()->pluginUrl . '/HighlightJs/res/highlight.pack.js';
+            echo '<script type="text/javascript" src="' . $jsUrl . '"></script>';
+            echo '<script type="text/javascript">window.onload = function () {
 var codes = document.getElementsByTagName("pre"),
     hlNames = {
         actionscript : /^as[1-3]$/i,
@@ -141,6 +144,7 @@ for (var i = 0; i < codes.length; i ++) {
     }
 }
 }</script>';
+        }
     }
 
     /**
