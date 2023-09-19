@@ -111,7 +111,7 @@ class Plugin implements PluginInterface
 
     setStyle();
 
-    getMedia().addListener('change', setStyle);
+    getMedia().addEventListener('change', setStyle);
 })();
 </script>
 <?php
