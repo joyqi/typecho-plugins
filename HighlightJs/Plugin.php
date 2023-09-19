@@ -61,6 +61,10 @@ class Plugin implements PluginInterface
         $style = new Form\Element\Select('style', $styles, 'default.css',
             _t('代码配色样式'));
         $form->addInput($style->addRule('enum', _t('必须选择配色样式'), $styles));
+
+        $darkStyle = new Form\Element\Select('darkStyle', $styles, 'default.css',
+            _t('暗色模式配色样式'));
+        $form->addInput($darkStyle->addRule('enum', _t('必须选择配色样式'), $styles));
     }
 
     /**
@@ -77,9 +81,39 @@ class Plugin implements PluginInterface
      */
     public static function header()
     {
-        $cssUrl = Helper::options()->pluginUrl . '/HighlightJs/res/styles/'
-            . Helper::options()->plugin('HighlightJs')->style;
-        echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />';
+        $options = Helper::options()->plugin('HighlightJs');
+        $baseUrl = Helper::options()->pluginUrl . '/HighlightJs/res/styles/';
+
+        $cssUrl = $baseUrl . $options->style;
+        $darkCssUrl = $baseUrl . ($options->darkStyle ?? $options->style);
+?>
+<script>
+(function () {
+    let lastStyle = null;
+
+    function getMedia() {
+        return matchMedia('(prefers-color-scheme: dark)');
+    }
+
+    function setStyle() {
+        const style = getMedial().matches ? '<?php echo $darkCssUrl; ?>' : '<?php echo $cssUrl; ?>';
+
+        if (lastStyle) {
+            lastStyle.remove();
+        }
+
+        lastStyle = document.createElement('link');
+        lastStyle.rel = 'stylesheet';
+        lastStyle.href = style;
+        document.head.appendChild(lastStyle);
+    }
+
+    setStyle();
+
+    getMedia().addListener('change', setStyle);
+})();
+</script>
+<?php
     }
 
     /**
