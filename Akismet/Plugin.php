@@ -145,11 +145,11 @@ class Plugin implements PluginInterface
      *
      * @param array $comment 评论结构
      * @param Base $post 被评论的文章
-     * @param array $result 返回的结果上下文
+     * @param array|null $result 返回的结果上下文
      * @param string $api api地址
      * @return array
      */
-    public static function filter(array $comment, Base $post, array $result, string $api = 'comment-check'): array
+    public static function filter(array $comment, Base $post, ?array $result, string $api = 'comment-check'): array
     {
         $comment = empty($result) ? $comment : $result;
 

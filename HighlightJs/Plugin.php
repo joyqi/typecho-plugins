@@ -79,13 +79,14 @@ class Plugin implements PluginInterface
     /**
      * 输出头部css
      */
-    public static function header()
+    public static function header($header, Archive $archive)
     {
-        $options = Helper::options()->plugin('HighlightJs');
-        $baseUrl = Helper::options()->pluginUrl . '/HighlightJs/res/styles/';
+        if ($archive->is('single')) {
+            $options = Helper::options()->plugin('HighlightJs');
+            $baseUrl = Helper::options()->pluginUrl . '/HighlightJs/res/styles/';
 
-        $cssUrl = $baseUrl . $options->style;
-        $darkCssUrl = $baseUrl . ($options->darkStyle ?? $options->style);
+            $cssUrl = $baseUrl . $options->style;
+            $darkCssUrl = $baseUrl . ($options->darkStyle ?? $options->style);
 ?>
 <script>
 (function () {
@@ -114,16 +115,18 @@ class Plugin implements PluginInterface
 })();
 </script>
 <?php
+        }
     }
 
     /**
      * 输出尾部js
      */
-    public static function footer()
+    public static function footer(Archive $archive)
     {
-        $jsUrl = Helper::options()->pluginUrl . '/HighlightJs/res/highlight.pack.js';
-        echo '<script type="text/javascript" src="' . $jsUrl . '"></script>';
-        echo '<script type="text/javascript">window.onload = function () {
+        if ($archive->is('single')) {
+            $jsUrl = Helper::options()->pluginUrl . '/HighlightJs/res/highlight.pack.js';
+            echo '<script type="text/javascript" src="' . $jsUrl . '"></script>';
+            echo '<script type="text/javascript">window.onload = function () {
 var codes = document.getElementsByTagName("pre"),
     hlNames = {
         actionscript : /^as[1-3]$/i,
@@ -175,6 +178,7 @@ for (var i = 0; i < codes.length; i ++) {
     }
 }
 }</script>';
+        }
     }
 
     /**

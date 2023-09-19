@@ -1,0 +1,60 @@
+name: Build Plugins
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Typecho Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build
+      run: |
+        cd Akismet && zip -q -r Akismet.zip * && mv Akismet.zip ../ && cd -
+        cd HighlightJs && zip -q -r HighlightJs.zip * && mv HighlightJs.zip ../ && cd -
+        cd IPLocation && zip -q -r IPLocation.zip * && mv IPLocation.zip ../ && cd -
+        cd Mailer && zip -q -r Mailer.zip * && mv Mailer.zip ../ && cd -
+    - name: Upload Akismet
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/joyqi/typecho-plugins/releases/50451581/assets{?name,label}
+        release_id: 50451581
+        asset_path: ./Akismet.zip
+        asset_name: Akismet.zip
+        asset_content_type: application/zip
+    - name: Upload HighlightJs
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/joyqi/typecho-plugins/releases/50451581/assets{?name,label}
+        release_id: 50451581
+        asset_path: ./HighlightJs.zip
+        asset_name: HighlightJs.zip
+        asset_content_type: application/zip
+    - name: Upload IPLocation
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/joyqi/typecho-plugins/releases/50451581/assets{?name,label}
+        release_id: 50451581
+        asset_path: ./IPLocation.zip
+        asset_name: IPLocation.zip
+        asset_content_type: application/zip
+    - name: Upload Mailer
+      uses: WebFreak001/deploy-nightly@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/joyqi/typecho-plugins/releases/50451581/assets{?name,label}
+        release_id: 50451581
+        asset_path: ./Mailer.zip
+        asset_name: Mailer.zip
+        asset_content_type: application/zip
