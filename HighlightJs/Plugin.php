@@ -97,7 +97,7 @@ class Plugin implements PluginInterface
     }
 
     function setStyle() {
-        const style = getMedial().matches ? '<?php echo $darkCssUrl; ?>' : '<?php echo $cssUrl; ?>';
+        const style = getMedia().matches ? '<?php echo $darkCssUrl; ?>' : '<?php echo $cssUrl; ?>';
 
         if (lastStyle) {
             lastStyle.remove();
