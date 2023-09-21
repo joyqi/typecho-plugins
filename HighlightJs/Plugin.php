@@ -149,8 +149,10 @@ for (var i = 0; i < codes.length; i ++) {
         var code = children[0], className = code.className;
 
         if (!!className) {
-            if (0 == className.indexOf("language-")) {
-                var lang = className.substring(5).toLowerCase(), finalLang;
+            var matches = className.match(/^(?:lang|language)\-(.+)$/i);
+
+            if (matches) {
+                var lang = matches[1].toLowerCase(), finalLang = null;
             
                 if (hlLangs[lang]) {
                     finalLang = lang;
